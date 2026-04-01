@@ -1,8 +1,8 @@
 """Black-Scholes option pricing and Greeks."""
 
 from enum import StrEnum
-from math import exp, log, sqrt
 
+import numpy as np
 from scipy.stats import norm
 
 
@@ -14,11 +14,11 @@ class OptionType(StrEnum):
 
 
 def _d1(S: float, K: float, T: float, r: float, sigma: float) -> float:
-    return (log(S / K) + (r + 0.5 * sigma**2) * T) / (sigma * sqrt(T))
+    return (np.log(S / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
 
 
 def _d2(S: float, K: float, T: float, r: float, sigma: float) -> float:
-    return _d1(S, K, T, r, sigma) - sigma * sqrt(T)
+    return _d1(S, K, T, r, sigma) - sigma * np.sqrt(T)
 
 
 def price(
@@ -44,7 +44,7 @@ def price(
     """
     d1 = _d1(S, K, T, r, sigma)
     d2 = _d2(S, K, T, r, sigma)
-    discount = exp(-r * T)
+    discount = np.exp(-r * T)
     if option_type == OptionType.CALL:
         return S * norm.cdf(d1) - K * discount * norm.cdf(d2)
     else:
@@ -70,7 +70,7 @@ def delta(
 def gamma(S: float, K: float, T: float, r: float, sigma: float) -> float:
     """Second derivative of price with respect to spot (same for calls and puts)."""
     d1 = _d1(S, K, T, r, sigma)
-    return norm.pdf(d1) / (S * sigma * sqrt(T))
+    return norm.pdf(d1) / (S * sigma * np.sqrt(T))
 
 
 def vega(S: float, K: float, T: float, r: float, sigma: float) -> float:
@@ -79,7 +79,7 @@ def vega(S: float, K: float, T: float, r: float, sigma: float) -> float:
     Returns vega per 1-point move in volatility (not per percentage point).
     """
     d1 = _d1(S, K, T, r, sigma)
-    return S * norm.pdf(d1) * sqrt(T)
+    return S * norm.pdf(d1) * np.sqrt(T)
 
 
 def theta(
@@ -96,8 +96,8 @@ def theta(
     """
     d1 = _d1(S, K, T, r, sigma)
     d2 = _d2(S, K, T, r, sigma)
-    discount = exp(-r * T)
-    decay = -(S * norm.pdf(d1) * sigma) / (2 * sqrt(T))
+    discount = np.exp(-r * T)
+    decay = -(S * norm.pdf(d1) * sigma) / (2 * np.sqrt(T))
     if option_type == OptionType.CALL:
         return (decay - r * K * discount * norm.cdf(d2)) / 365
     else:
@@ -117,7 +117,7 @@ def rho(
     Returns rho per 1-point move in rate (not per basis point).
     """
     d2 = _d2(S, K, T, r, sigma)
-    discount = exp(-r * T)
+    discount = np.exp(-r * T)
     if option_type == OptionType.CALL:
         return K * T * discount * norm.cdf(d2)
     else:

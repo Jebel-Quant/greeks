@@ -92,6 +92,8 @@ jobs:
           args: >-
             --verbose
             --no-progress
+            --no-fail-empty
             --accept 200,206,429
             README.md
           fail: true
+
