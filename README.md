@@ -27,15 +27,15 @@ from greeks.black_scholes import OptionType, price, delta, gamma, vega, theta, r
 S, K, T, r, sigma = 100.0, 100.0, 1.0, 0.05, 0.20
 
 # Price
-print(price(S, K, T, r, sigma, OptionType.CALL))   # ~10.45
-print(price(S, K, T, r, sigma, OptionType.PUT))    # ~5.57
+call_price = price(S, K, T, r, sigma, OptionType.CALL)   # ~10.45
+put_price  = price(S, K, T, r, sigma, OptionType.PUT)    # ~5.57
 
 # Greeks
-print(delta(S, K, T, r, sigma, OptionType.CALL))   # ~0.637
-print(gamma(S, K, T, r, sigma))                    # ~0.019
-print(vega(S, K, T, r, sigma))                     # ~37.52
-print(theta(S, K, T, r, sigma, OptionType.CALL))   # ~-0.018  (per day)
-print(rho(S, K, T, r, sigma, OptionType.CALL))     # ~53.23
+d = delta(S, K, T, r, sigma, OptionType.CALL)   # ~0.637
+g = gamma(S, K, T, r, sigma)                    # ~0.019
+v = vega(S, K, T, r, sigma)                     # ~37.52
+t = theta(S, K, T, r, sigma, OptionType.CALL)   # ~-0.018  (per day)
+p = rho(S, K, T, r, sigma, OptionType.CALL)     # ~53.23
 ```
 
 ### Parameter conventions
