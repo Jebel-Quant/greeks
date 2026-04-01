@@ -8,14 +8,17 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "scipy>=1.17.0",
+    "numpy>=2.4.4"
+]
 
 [dependency-groups]
 dev = [
     "marimo>=0.20.0",
-    "numpy>=2.4.2",
     "plotly>=6.5.2",
-    "polars>=1.37.1"
+    "polars>=1.37.1",
+    "pandas>=3.0"
 ]
 
 [tool.hatch.build.targets.wheel]

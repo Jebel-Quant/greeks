@@ -1,7 +1,5 @@
 repository: Jebel-Quant/rhiza
 ref: "v0.8.19"
-template-host: github
-language: python
 templates:
 - core
 - tests
