@@ -1,5 +1,5 @@
 repository: Jebel-Quant/rhiza
-ref: main
+ref: "v0.8.20"
 template-host: github
 language: python
 templates:
@@ -7,7 +7,4 @@ templates:
 - tests
 - book
 - marimo
-- presentation
 - github
-include: []
-exclude: []
