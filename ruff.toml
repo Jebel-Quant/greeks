@@ -109,10 +109,15 @@ line-ending = "auto"
     "PLW1510",  # Allow subprocess without explicit check parameter
 ]
 "tests/**/*.py" = [
+    "D101",     # Allow missing docstrings in test classes
+    "D102",     # Allow missing docstrings in test methods
     "ERA001",   # Allow commented out code in project tests
     "PLR2004",  # Allow magic values in project tests
     "RUF002",   # Allow ambiguous unicode in project tests
     "RUF012",   # Allow mutable class attributes in project tests
+]
+"src/greeks/black_scholes.py" = [
+    "N803",     # Allow uppercase argument names (S, K, T are standard financial notation)
 ]
 # Marimo notebooks - allow flexible coding patterns for interactive exploration
 "**/marimo/**/*.py" = [

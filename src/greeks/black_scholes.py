@@ -7,6 +7,8 @@ from scipy.stats import norm
 
 
 class OptionType(StrEnum):
+    """Option type: call or put."""
+
     CALL = "call"
     PUT = "put"
 
