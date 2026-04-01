@@ -41,6 +41,12 @@ def price(
 
     Returns:
         Option price.
+
+    Examples:
+        >>> float(round(price(100, 100, 1.0, 0.05, 0.20, OptionType.CALL), 2))
+        10.45
+        >>> float(round(price(100, 100, 1.0, 0.05, 0.20, OptionType.PUT), 2))
+        5.57
     """
     d1 = _d1(S, K, T, r, sigma)
     d2 = _d2(S, K, T, r, sigma)
