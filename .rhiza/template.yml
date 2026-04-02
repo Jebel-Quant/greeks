@@ -1,8 +1,9 @@
 repository: Jebel-Quant/rhiza
-ref: "v0.8.19"
+ref: "v0.8.20"
 templates:
 - core
 - tests
 - book
 - marimo
 - github
+- renovate
