@@ -1,5 +1,5 @@
 repository: Jebel-Quant/rhiza
-ref: "v0.8.20"
+ref: "v0.10.1"
 templates:
 - core
 - tests
