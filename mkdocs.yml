@@ -1,0 +1,35 @@
+INHERIT: docs/mkdocs-base.yml
+
+site_name: greeks
+site_description: Option pricing and Greeks under the Black-Scholes model.
+site_author: Jebel Quant Research
+site_url: https://jebel-quant.github.io/greeks/
+repo_url: https://github.com/Jebel-Quant/greeks
+repo_name: Jebel-Quant/greeks
+copyright: Copyright &copy; 2024–2026 Jebel Quant Research
+
+nav:
+  - Home: index.md
+  - Development:
+    - Tests: development/TESTS.md
+    - Marimo: development/MARIMO.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Jebel-Quant/greeks
+
+theme:
+  icon:
+    logo: material/chart-bell-curve-cumulative
+
+plugins:
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
