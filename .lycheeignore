@@ -1,0 +1,5 @@
+# Exclude the GitHub Pages documentation URL until GitHub Pages is enabled
+# in the repository settings (Settings → Pages → Source: GitHub Actions).
+# Once GitHub Pages is enabled and the BOOK workflow successfully deploys,
+# this entry can be removed.
+https://jebel-quant.github.io/greeks
