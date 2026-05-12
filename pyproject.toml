@@ -15,10 +15,10 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "marimo>=0.23.3",
+    "marimo>=0.23.6",
     "plotly>=6.7.0",
     "polars>=1.40.1",
-    "pandas>=3.0"
+    "pandas>=3.0.3"
 ]
 
 [tool.hatch.build.targets.wheel]
