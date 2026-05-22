@@ -1,8 +1,7 @@
 repository: Jebel-Quant/rhiza
-ref: "v0.10.3"
+ref: "v0.10.9"
 templates:
-- core
-- tests
-- book
-- marimo
+- github-tests
+- github-book
+- github-marimo
 - github
