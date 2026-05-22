@@ -10,7 +10,6 @@ templates:
 - book
 - marimo
 - github
-- renovate
 files:
 - .bandit
 - .editorconfig
@@ -89,7 +88,6 @@ files:
 - docs/index.md
 - docs/mkdocs-base.yml
 - pytest.ini
-- renovate.json
 - ruff.toml
-synced_at: '2026-05-22T06:40:24Z'
+synced_at: '2026-05-22T11:03:07Z'
 strategy: merge
