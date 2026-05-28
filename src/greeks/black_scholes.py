@@ -14,10 +14,12 @@ class OptionType(StrEnum):
 
 
 def _d1(S: float, K: float, T: float, r: float, sigma: float) -> float:
+    """Compute d1 of the Black-Scholes formula."""
     return (np.log(S / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
 
 
 def _d2(S: float, K: float, T: float, r: float, sigma: float) -> float:
+    """Compute d2 of the Black-Scholes formula (d1 minus sigma*sqrt(T))."""
     return _d1(S, K, T, r, sigma) - sigma * np.sqrt(T)
 
 
