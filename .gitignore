@@ -35,6 +35,9 @@ docs/paper/*.toc
 # temp file used by Junie
 .output.txt
 
+# local planning notes
+plan.md
+
 # folder used for programs, e.g. uv, uvx, task, etc.
 bin
 
