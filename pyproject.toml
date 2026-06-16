@@ -35,11 +35,11 @@ dev = [
     "pandas>=3.0.3"
 ]
 test = [
-    "pytest>=8.0.0",
+    "pytest>=9.1.0",
     "pytest-cov>=7.0.0"
 ]
 lint = [
-    "ruff>=0.15.16"
+    "ruff>=0.15.17"
 ]
 
 [tool.hatch.build.targets.wheel]
