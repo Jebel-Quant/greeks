@@ -145,6 +145,11 @@ line-ending = "auto"
 "src/greeks/black_scholes.py" = [
     "N803",     # Allow uppercase argument names (S, K, T are standard financial notation)
 ]
+# Property tests drive the model with the same standard financial notation (S, K, T)
+"tests/test_properties.py" = [
+    "N803",     # uppercase Hypothesis-strategy argument names (S, K, T)
+    "N806",     # uppercase local variable names in degenerate-input cases
+]
 # Marimo notebooks - allow flexible coding patterns for interactive exploration
 "**/notebooks/*.py" = [
     "ANN",     # notebooks prioritize interactive readability over strict annotation coverage

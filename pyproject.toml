@@ -19,8 +19,8 @@ authors = [
     { name = "Thomas Schmelzer", email = "thomas.s@yukkalab.com" }
 ]
 dependencies = [
-    "scipy>=1.17.0",
-    "numpy>=2.4.6"
+    "scipy>=1.17.0,<2",
+    "numpy>=2.4.6,<3"
 ]
 
 [project.urls]
@@ -36,10 +36,12 @@ dev = [
 ]
 test = [
     "pytest>=9.1.0",
-    "pytest-cov>=7.0.0"
+    "pytest-cov>=7.0.0",
+    "hypothesis>=6.155.3"
 ]
 lint = [
-    "ruff>=0.15.17"
+    "ruff>=0.15.17",
+    "scipy-stubs>=1.17.1.5"
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -48,8 +50,3 @@ packages = ["src/greeks"]
 [tool.deptry]
 # see https://deptry.com/usage/#pep-621-dev-dependency-groups
 pep621_dev_dependency_groups = ["dev"]
-
-[[tool.mypy.overrides]]
-# scipy does not ship type information (PEP 561); silence its missing stubs.
-module = ["scipy.*"]
-ignore_missing_imports = true
