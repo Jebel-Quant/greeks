@@ -67,7 +67,14 @@ def delta(
     sigma: float,
     option_type: OptionType = OptionType.CALL,
 ) -> float:
-    """First derivative of price with respect to spot."""
+    """First derivative of price with respect to spot.
+
+    Examples:
+        >>> float(round(delta(100, 100, 1.0, 0.05, 0.20, OptionType.CALL), 4))
+        0.6368
+        >>> float(round(delta(100, 100, 1.0, 0.05, 0.20, OptionType.PUT), 4))
+        -0.3632
+    """
     d1 = _d1(S, K, T, r, sigma)
     if option_type == OptionType.CALL:
         return float(norm.cdf(d1))
@@ -76,7 +83,12 @@ def delta(
 
 
 def gamma(S: float, K: float, T: float, r: float, sigma: float) -> float:
-    """Second derivative of price with respect to spot (same for calls and puts)."""
+    """Second derivative of price with respect to spot (same for calls and puts).
+
+    Examples:
+        >>> float(round(gamma(100, 100, 1.0, 0.05, 0.20), 4))
+        0.0188
+    """
     d1 = _d1(S, K, T, r, sigma)
     return float(norm.pdf(d1) / (S * sigma * np.sqrt(T)))
 
@@ -85,6 +97,10 @@ def vega(S: float, K: float, T: float, r: float, sigma: float) -> float:
     """First derivative of price with respect to volatility (same for calls and puts).
 
     Returns vega per 1-point move in volatility (not per percentage point).
+
+    Examples:
+        >>> float(round(vega(100, 100, 1.0, 0.05, 0.20), 3))
+        37.524
     """
     d1 = _d1(S, K, T, r, sigma)
     return float(S * norm.pdf(d1) * np.sqrt(T))
@@ -101,6 +117,10 @@ def theta(
     """First derivative of price with respect to time (per calendar day).
 
     Returns theta as a negative number representing daily decay.
+
+    Examples:
+        >>> float(round(theta(100, 100, 1.0, 0.05, 0.20, OptionType.CALL), 5))
+        -0.01757
     """
     d1 = _d1(S, K, T, r, sigma)
     d2 = _d2(S, K, T, r, sigma)
@@ -123,6 +143,10 @@ def rho(
     """First derivative of price with respect to the risk-free rate.
 
     Returns rho per 1-point move in rate (not per basis point).
+
+    Examples:
+        >>> float(round(rho(100, 100, 1.0, 0.05, 0.20, OptionType.CALL), 2))
+        53.23
     """
     d2 = _d2(S, K, T, r, sigma)
     discount = np.exp(-r * T)
