@@ -15,12 +15,12 @@ class OptionType(StrEnum):
 
 def _d1(S: float, K: float, T: float, r: float, sigma: float) -> float:
     """Compute d1 of the Black-Scholes formula."""
-    return (np.log(S / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T))
+    return float((np.log(S / K) + (r + 0.5 * sigma**2) * T) / (sigma * np.sqrt(T)))
 
 
 def _d2(S: float, K: float, T: float, r: float, sigma: float) -> float:
     """Compute d2 of the Black-Scholes formula (d1 minus sigma*sqrt(T))."""
-    return _d1(S, K, T, r, sigma) - sigma * np.sqrt(T)
+    return float(_d1(S, K, T, r, sigma) - sigma * np.sqrt(T))
 
 
 def price(
@@ -54,9 +54,9 @@ def price(
     d2 = _d2(S, K, T, r, sigma)
     discount = np.exp(-r * T)
     if option_type == OptionType.CALL:
-        return S * norm.cdf(d1) - K * discount * norm.cdf(d2)
+        return float(S * norm.cdf(d1) - K * discount * norm.cdf(d2))
     else:
-        return K * discount * norm.cdf(-d2) - S * norm.cdf(-d1)
+        return float(K * discount * norm.cdf(-d2) - S * norm.cdf(-d1))
 
 
 def delta(
@@ -67,27 +67,43 @@ def delta(
     sigma: float,
     option_type: OptionType = OptionType.CALL,
 ) -> float:
-    """First derivative of price with respect to spot."""
+    """First derivative of price with respect to spot.
+
+    Examples:
+        >>> float(round(delta(100, 100, 1.0, 0.05, 0.20, OptionType.CALL), 4))
+        0.6368
+        >>> float(round(delta(100, 100, 1.0, 0.05, 0.20, OptionType.PUT), 4))
+        -0.3632
+    """
     d1 = _d1(S, K, T, r, sigma)
     if option_type == OptionType.CALL:
-        return norm.cdf(d1)
+        return float(norm.cdf(d1))
     else:
-        return norm.cdf(d1) - 1
+        return float(norm.cdf(d1) - 1)
 
 
 def gamma(S: float, K: float, T: float, r: float, sigma: float) -> float:
-    """Second derivative of price with respect to spot (same for calls and puts)."""
+    """Second derivative of price with respect to spot (same for calls and puts).
+
+    Examples:
+        >>> float(round(gamma(100, 100, 1.0, 0.05, 0.20), 4))
+        0.0188
+    """
     d1 = _d1(S, K, T, r, sigma)
-    return norm.pdf(d1) / (S * sigma * np.sqrt(T))
+    return float(norm.pdf(d1) / (S * sigma * np.sqrt(T)))
 
 
 def vega(S: float, K: float, T: float, r: float, sigma: float) -> float:
     """First derivative of price with respect to volatility (same for calls and puts).
 
     Returns vega per 1-point move in volatility (not per percentage point).
+
+    Examples:
+        >>> float(round(vega(100, 100, 1.0, 0.05, 0.20), 3))
+        37.524
     """
     d1 = _d1(S, K, T, r, sigma)
-    return S * norm.pdf(d1) * np.sqrt(T)
+    return float(S * norm.pdf(d1) * np.sqrt(T))
 
 
 def theta(
@@ -101,15 +117,19 @@ def theta(
     """First derivative of price with respect to time (per calendar day).
 
     Returns theta as a negative number representing daily decay.
+
+    Examples:
+        >>> float(round(theta(100, 100, 1.0, 0.05, 0.20, OptionType.CALL), 5))
+        -0.01757
     """
     d1 = _d1(S, K, T, r, sigma)
     d2 = _d2(S, K, T, r, sigma)
     discount = np.exp(-r * T)
     decay = -(S * norm.pdf(d1) * sigma) / (2 * np.sqrt(T))
     if option_type == OptionType.CALL:
-        return (decay - r * K * discount * norm.cdf(d2)) / 365
+        return float((decay - r * K * discount * norm.cdf(d2)) / 365)
     else:
-        return (decay + r * K * discount * norm.cdf(-d2)) / 365
+        return float((decay + r * K * discount * norm.cdf(-d2)) / 365)
 
 
 def rho(
@@ -123,10 +143,14 @@ def rho(
     """First derivative of price with respect to the risk-free rate.
 
     Returns rho per 1-point move in rate (not per basis point).
+
+    Examples:
+        >>> float(round(rho(100, 100, 1.0, 0.05, 0.20, OptionType.CALL), 2))
+        53.23
     """
     d2 = _d2(S, K, T, r, sigma)
     discount = np.exp(-r * T)
     if option_type == OptionType.CALL:
-        return K * T * discount * norm.cdf(d2)
+        return float(K * T * discount * norm.cdf(d2))
     else:
-        return -K * T * discount * norm.cdf(-d2)
+        return float(-K * T * discount * norm.cdf(-d2))

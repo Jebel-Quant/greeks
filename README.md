@@ -22,7 +22,7 @@ Requires Python 3.11+.
 ## Usage
 
 ```python
-from greeks.black_scholes import OptionType, price, delta, gamma, vega, theta, rho
+from greeks import OptionType, price, delta, gamma, vega, theta, rho
 
 S, K, T, r, sigma = 100.0, 100.0, 1.0, 0.05, 0.20
 
@@ -37,6 +37,21 @@ v = vega(S, K, T, r, sigma)                     # ~37.52
 t = theta(S, K, T, r, sigma, OptionType.CALL)   # ~-0.018  (per day)
 p = rho(S, K, T, r, sigma, OptionType.CALL)     # ~53.23
 ```
+
+### API reference
+
+Every function takes the market parameters `(S, K, T, r, sigma)`; `price`, `delta`, `theta`, and `rho` also take an optional `option_type` (defaults to `OptionType.CALL`). All return a `float`.
+
+| Function | Signature | Returns |
+|----------|-----------|---------|
+| `price` | `price(S, K, T, r, sigma, option_type=CALL)` | Option price |
+| `delta` | `delta(S, K, T, r, sigma, option_type=CALL)` | ∂Price/∂S — sensitivity to spot |
+| `gamma` | `gamma(S, K, T, r, sigma)` | ∂²Price/∂S² — same for calls and puts |
+| `vega` | `vega(S, K, T, r, sigma)` | ∂Price/∂sigma — same for calls and puts |
+| `theta` | `theta(S, K, T, r, sigma, option_type=CALL)` | ∂Price/∂t — per calendar day |
+| `rho` | `rho(S, K, T, r, sigma, option_type=CALL)` | ∂Price/∂r — sensitivity to the rate |
+
+`OptionType` is a `StrEnum` with members `OptionType.CALL` (`"call"`) and `OptionType.PUT` (`"put"`).
 
 ### Parameter conventions
 
