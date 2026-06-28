@@ -50,3 +50,11 @@ packages = ["src/greeks"]
 [tool.deptry]
 # see https://deptry.com/usage/#pep-621-dev-dependency-groups
 pep621_dev_dependency_groups = ["dev"]
+
+[tool.deptry.per_rule_ignores]
+# .rhiza/tests is template-owned test infrastructure (added to the deptry scan
+# in rhiza v0.19.7). Its pytest/dotenv/packaging imports belong to the rhiza
+# engine, not this repo's dependency set.
+DEP001 = ["dotenv"]
+DEP003 = ["packaging"]
+DEP004 = ["pytest"]
