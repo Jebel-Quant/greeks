@@ -48,5 +48,6 @@ lint = [
 packages = ["src/greeks"]
 
 [tool.deptry]
-# see https://deptry.com/usage/#pep-621-dev-dependency-groups
-optional_dependencies_dev_groups = ["dev"]
+# The dev/test/lint groups live under [dependency-groups] (PEP 735), which
+# deptry already treats as development dependencies by default, so no
+# dev-group configuration is needed here.
