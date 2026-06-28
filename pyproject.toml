@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "greeks"
 version = "0.1.1"
-description = "Add your description here"
+description = "Option pricing and Greeks under the Black-Scholes model."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
