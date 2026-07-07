@@ -120,6 +120,7 @@ class TestGamma:
         h = 0.1
 
         def second_difference(option_type):
+            """Central second difference of price w.r.t. spot."""
             up = price(S + h, K, T, r, sigma, option_type)
             mid = price(S, K, T, r, sigma, option_type)
             down = price(S - h, K, T, r, sigma, option_type)
