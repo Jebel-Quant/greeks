@@ -1,5 +1,7 @@
 """Tests for greeks.black_scholes module."""
 
+import pytest
+
 from greeks.black_scholes import OptionType, delta, gamma, price, rho, theta, vega
 
 # Reference values computed with well-known BSM inputs:
@@ -8,6 +10,10 @@ S, K, T, r, sigma = 100.0, 100.0, 1.0, 0.05, 0.20
 CALL = OptionType.CALL
 PUT = OptionType.PUT
 ABS_TOL = 1e-4
+
+# Every public function accepts the five market params positionally, so they can
+# be exercised uniformly with keyword arguments in the validation tests.
+ALL_FUNCS = [price, delta, gamma, vega, theta, rho]
 
 
 class TestOptionType:
@@ -109,12 +115,23 @@ class TestGamma:
         """Gamma is strictly positive."""
         assert gamma(S, K, T, r, sigma) > 0
 
-    def test_gamma_symmetric_for_call_and_put(self):
-        """Gamma depends only on the market params, not the option type."""
-        # Gamma is the same regardless of option type — just verify the function
-        # accepts only the 5 market params
+    def test_gamma_matches_second_difference_of_price(self):
+        """Gamma equals the numerical 2nd derivative of price — same for calls and puts."""
+        h = 0.1
+
+        def second_difference(option_type):
+            """Central second difference of price w.r.t. spot."""
+            up = price(S + h, K, T, r, sigma, option_type)
+            mid = price(S, K, T, r, sigma, option_type)
+            down = price(S - h, K, T, r, sigma, option_type)
+            return (up - 2 * mid + down) / h**2
+
         g = gamma(S, K, T, r, sigma)
-        assert g > 0
+        # The finite-difference gamma agrees for calls AND puts, confirming gamma
+        # is independent of option type.
+        assert abs(second_difference(CALL) - g) < 1e-4
+        assert abs(second_difference(PUT) - g) < 1e-4
+        assert abs(second_difference(CALL) - second_difference(PUT)) < 1e-6
 
 
 class TestVega:
@@ -146,6 +163,11 @@ class TestTheta:
         # Known value: ~-0.01757 per calendar day
         assert abs(theta(S, K, T, r, sigma, CALL) - (-0.01757)) < ABS_TOL
 
+    def test_put_theta_value(self):
+        """Put theta matches the known ATM reference value."""
+        # Known value: ~-0.00454 per calendar day
+        assert abs(theta(S, K, T, r, sigma, PUT) - (-0.00454)) < ABS_TOL
+
     def test_default_option_type_is_call(self):
         """Theta defaults to a call when no option type is given."""
         assert theta(S, K, T, r, sigma) == theta(S, K, T, r, sigma, CALL)
@@ -167,6 +189,46 @@ class TestRho:
         # Known value: ~53.23  (per unit rate, not per bp)
         assert abs(rho(S, K, T, r, sigma, CALL) - 53.23) < 0.01
 
+    def test_put_rho_value(self):
+        """Put rho matches the known ATM reference value."""
+        # Known value: ~-41.89  (per unit rate, not per bp)
+        assert abs(rho(S, K, T, r, sigma, PUT) - (-41.89)) < 0.01
+
     def test_default_option_type_is_call(self):
         """Rho defaults to a call when no option type is given."""
         assert rho(S, K, T, r, sigma) == rho(S, K, T, r, sigma, CALL)
+
+
+class TestValidation:
+    """Every public function rejects degenerate market parameters."""
+
+    @pytest.mark.parametrize("fn", ALL_FUNCS)
+    @pytest.mark.parametrize(
+        "override",
+        [
+            {"S": 0.0},
+            {"S": -1.0},
+            {"K": 0.0},
+            {"K": -1.0},
+            {"T": 0.0},
+            {"T": -1.0},
+            {"sigma": 0.0},
+            {"sigma": -0.1},
+            {"S": float("nan")},
+            {"T": float("inf")},
+            {"r": float("nan")},
+            {"r": float("-inf")},
+        ],
+    )
+    def test_rejects_invalid_params(self, fn, override):
+        """Non-finite or non-positive market parameters raise ValueError."""
+        params = {"S": S, "K": K, "T": T, "r": r, "sigma": sigma}
+        params.update(override)
+        with pytest.raises(ValueError, match="must be"):
+            fn(**params)
+
+    @pytest.mark.parametrize("fn", ALL_FUNCS)
+    def test_allows_negative_rate(self, fn):
+        """A negative (but finite) risk-free rate is a valid input."""
+        # Must not raise — negative rates are economically meaningful.
+        fn(S=S, K=K, T=T, r=-0.01, sigma=sigma)

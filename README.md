@@ -67,6 +67,20 @@ Every function takes the market parameters `(S, K, T, r, sigma)`; `price`, `delt
 - **Rho** is per 1-point move in `r`, not per basis point.
 - **Theta** is per calendar day.
 
+### Input validation
+
+`S`, `K`, `T`, and `sigma` must be finite and strictly positive; `r` must be
+finite (it may be negative). Any other value raises `ValueError` rather than
+returning a NaN/inf result, so degenerate inputs fail loudly at the call site.
+
+## Stability
+
+This project follows [semantic versioning](https://semver.org). While the
+version is `0.x`, the public API (the functions and `OptionType` exported from
+`greeks`) may change in a backwards-incompatible way in any minor release;
+breaking changes will be called out in the release notes. From `1.0.0` onward,
+breaking changes to the public API will only ship in a major release.
+
 ## Development
 
 ```bash
