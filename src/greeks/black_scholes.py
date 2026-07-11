@@ -14,6 +14,10 @@ from enum import StrEnum
 import numpy as np
 from scipy.stats import norm
 
+# Theta is reported as decay per calendar day, so the annualised derivative is
+# divided by the number of days in a year.
+_CALENDAR_DAYS_PER_YEAR = 365
+
 
 class OptionType(StrEnum):
     """Option type: call or put."""
@@ -39,26 +43,31 @@ def _validate(S: float, K: float, T: float, r: float, sigma: float) -> None:
             raise ValueError(msg)
 
 
-def _d1_d2(S: float, K: float, T: float, r: float, sigma: float) -> tuple[float, float]:
-    """Compute d1 and d2 of the Black-Scholes formula in a single pass.
+def _d1(S: float, K: float, T: float, r: float, sigma: float) -> float:
+    """Compute d1 of the Black-Scholes formula.
 
-    ``d2`` is derived from ``d1`` (``d2 = d1 - sigma*sqrt(T)``) so ``d1`` is
-    evaluated only once even when both are needed.
+    The ``0.5 * sigma**2`` term is the variance drift adjustment of the
+    log-moneyness numerator.
     """
     vol_sqrt_t = sigma * np.sqrt(T)
-    d1 = float((np.log(S / K) + (r + 0.5 * sigma**2) * T) / vol_sqrt_t)
-    d2 = float(d1 - vol_sqrt_t)
-    return d1, d2
-
-
-def _d1(S: float, K: float, T: float, r: float, sigma: float) -> float:
-    """Compute d1 of the Black-Scholes formula."""
-    return _d1_d2(S, K, T, r, sigma)[0]
+    return float((np.log(S / K) + (r + 0.5 * sigma**2) * T) / vol_sqrt_t)
 
 
 def _d2(S: float, K: float, T: float, r: float, sigma: float) -> float:
     """Compute d2 of the Black-Scholes formula (d1 minus sigma*sqrt(T))."""
-    return _d1_d2(S, K, T, r, sigma)[1]
+    return float(_d1(S, K, T, r, sigma) - sigma * np.sqrt(T))
+
+
+def _d1_d2(S: float, K: float, T: float, r: float, sigma: float) -> tuple[float, float]:
+    """Compute d1 and d2 of the Black-Scholes formula.
+
+    ``d2`` is derived from ``d1`` (``d2 = d1 - sigma*sqrt(T)``); callers that
+    need only one value call :func:`_d1` or :func:`_d2` directly so nothing is
+    computed and then discarded.
+    """
+    d1 = _d1(S, K, T, r, sigma)
+    d2 = float(d1 - sigma * np.sqrt(T))
+    return d1, d2
 
 
 def price(
@@ -185,9 +194,9 @@ def theta(
     discount = np.exp(-r * T)
     decay = -(S * norm.pdf(d1) * sigma) / (2 * np.sqrt(T))
     if option_type == OptionType.CALL:
-        return float((decay - r * K * discount * norm.cdf(d2)) / 365)
+        return float((decay - r * K * discount * norm.cdf(d2)) / _CALENDAR_DAYS_PER_YEAR)
     else:
-        return float((decay + r * K * discount * norm.cdf(-d2)) / 365)
+        return float((decay + r * K * discount * norm.cdf(-d2)) / _CALENDAR_DAYS_PER_YEAR)
 
 
 def rho(
