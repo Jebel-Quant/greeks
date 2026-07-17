@@ -6,3 +6,8 @@ profiles:
 
 templates:
   - legal
+
+exclude:
+  - .github/workflows/rhiza_fuzzing.yml
+  - .github/workflows/rhiza_scorecard.yml
+  - .github/workflows/rhiza_weekly.yml
