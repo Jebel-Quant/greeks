@@ -39,11 +39,7 @@ ALLOWED_ORPHANS: frozenset[str] = frozenset({"properties"})
 
 def _source_modules() -> list[Path]:
     """Return every non-``__init__`` Python module under *SRC_ROOT*."""
-    return [
-        p
-        for p in SRC_ROOT.rglob("*.py")
-        if p.name != "__init__.py" and not p.name.startswith("_")
-    ]
+    return [p for p in SRC_ROOT.rglob("*.py") if p.name != "__init__.py" and not p.name.startswith("_")]
 
 
 def _expected_test_path(src: Path) -> Path:
@@ -64,7 +60,7 @@ def _test_files() -> list[Path]:
 def _source_module_for_test(test: Path) -> Path:
     """Return the expected source module for *test* (inverse of :func:`_expected_test_path`)."""
     relative = test.relative_to(TEST_ROOT)
-    src_name = relative.name[len("test_"):]  # strip leading "test_"
+    src_name = relative.name[len("test_") :]  # strip leading "test_"
     return SRC_ROOT / relative.parent / src_name
 
 
@@ -78,10 +74,7 @@ def check_missing_tests(errors: list[str]) -> None:
     for src in sorted(_source_modules()):
         expected = _expected_test_path(src)
         if not expected.exists():
-            errors.append(
-                f"✗ missing test file {expected.relative_to(ROOT)}"
-                f" for source module {src.relative_to(ROOT)}"
-            )
+            errors.append(f"✗ missing test file {expected.relative_to(ROOT)} for source module {src.relative_to(ROOT)}")
         else:
             print(f"✓ {expected.relative_to(ROOT)}")
 
@@ -90,15 +83,14 @@ def check_orphan_tests(errors: list[str]) -> None:
     """Every test file must map back to a real source module."""
     for test in sorted(_test_files()):
         stem = test.stem  # e.g. "test_black_scholes"
-        module_name = stem[len("test_"):]  # e.g. "black_scholes"
+        module_name = stem[len("test_") :]  # e.g. "black_scholes"
         if module_name in ALLOWED_ORPHANS:
             print(f"✓ {test.relative_to(ROOT)} (allowed cross-cutting test)")
             continue
         expected_src = _source_module_for_test(test)
         if not expected_src.exists():
             errors.append(
-                f"✗ orphan test file {test.relative_to(ROOT)}"
-                f" (no source module {expected_src.relative_to(ROOT)})"
+                f"✗ orphan test file {test.relative_to(ROOT)} (no source module {expected_src.relative_to(ROOT)})"
             )
 
 
