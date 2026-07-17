@@ -22,44 +22,44 @@ vol = st.floats(min_value=0.01, max_value=2.0)
 
 
 @pytest.mark.property
-@given(S=spot, K=strike, T=expiry, r=rate, sigma=vol)
-def test_put_call_parity(S, K, T, r, sigma):
+@given(s=spot, k=strike, t=expiry, r=rate, sigma=vol)
+def test_put_call_parity(s, k, t, r, sigma):
     """C - P == S - K * exp(-rT) for every valid input."""
-    c = price(S, K, T, r, sigma, OptionType.CALL)
-    p = price(S, K, T, r, sigma, OptionType.PUT)
-    rhs = S - K * math.exp(-r * T)
+    c = price(s, k, t, r, sigma, OptionType.CALL)
+    p = price(s, k, t, r, sigma, OptionType.PUT)
+    rhs = s - k * math.exp(-r * t)
     assert math.isclose(c - p, rhs, rel_tol=1e-9, abs_tol=1e-6)
 
 
 @pytest.mark.property
-@given(S=spot, K=strike, T=expiry, r=rate, sigma=vol)
-def test_call_delta_in_unit_interval(S, K, T, r, sigma):
+@given(s=spot, k=strike, t=expiry, r=rate, sigma=vol)
+def test_call_delta_in_unit_interval(s, k, t, r, sigma):
     """Call delta lies in (0, 1) and put delta in (-1, 0)."""
-    assert 0.0 <= delta(S, K, T, r, sigma, OptionType.CALL) <= 1.0
-    assert -1.0 <= delta(S, K, T, r, sigma, OptionType.PUT) <= 0.0
+    assert 0.0 <= delta(s, k, t, r, sigma, OptionType.CALL) <= 1.0
+    assert -1.0 <= delta(s, k, t, r, sigma, OptionType.PUT) <= 0.0
 
 
 @pytest.mark.property
-@given(S=spot, K=strike, T=expiry, r=rate, sigma=vol)
-def test_gamma_and_vega_non_negative(S, K, T, r, sigma):
+@given(s=spot, k=strike, t=expiry, r=rate, sigma=vol)
+def test_gamma_and_vega_non_negative(s, k, t, r, sigma):
     """Gamma and vega are non-negative everywhere."""
-    assert gamma(S, K, T, r, sigma) >= 0.0
-    assert vega(S, K, T, r, sigma) >= 0.0
+    assert gamma(s, k, t, r, sigma) >= 0.0
+    assert vega(s, k, t, r, sigma) >= 0.0
 
 
 @pytest.mark.property
 @given(
-    S=spot,
-    K=strike,
-    T=expiry,
+    s=spot,
+    k=strike,
+    t=expiry,
     r=rate,
     sigma1=vol,
     bump=st.floats(min_value=0.01, max_value=1.0),
 )
-def test_call_price_monotonic_in_volatility(S, K, T, r, sigma1, bump):
+def test_call_price_monotonic_in_volatility(s, k, t, r, sigma1, bump):
     """Higher volatility never decreases a call's price (vega >= 0)."""
-    cheaper = price(S, K, T, r, sigma1, OptionType.CALL)
-    dearer = price(S, K, T, r, sigma1 + bump, OptionType.CALL)
+    cheaper = price(s, k, t, r, sigma1, OptionType.CALL)
+    dearer = price(s, k, t, r, sigma1 + bump, OptionType.CALL)
     assert dearer >= cheaper - 1e-9
 
 
@@ -73,7 +73,7 @@ def test_call_price_at_near_zero_expiry_is_intrinsic():
 
 def test_call_price_at_near_zero_vol_is_discounted_intrinsic():
     """As sigma -> 0 a call collapses to max(S - K * exp(-rT), 0)."""
-    S, K, T, r = 120.0, 100.0, 1.0, 0.05
-    c = price(S, K, T, r, 1e-6, OptionType.CALL)
-    expected = S - K * math.exp(-r * T)
+    s, k, t, r = 120.0, 100.0, 1.0, 0.05
+    c = price(s, k, t, r, 1e-6, OptionType.CALL)
+    expected = s - k * math.exp(-r * t)
     assert math.isclose(c, expected, abs_tol=1e-3)
