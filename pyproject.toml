@@ -30,18 +30,18 @@ Repository = "https://github.com/Jebel-Quant/greeks"
 
 [dependency-groups]
 dev = [
-    "marimo>=0.23.14",
+    "marimo>=0.23.15",
     "plotly>=6.9.0",
-    "polars>=1.43.0",
-    "pandas>=3.0.3"
+    "polars>=1.43.1",
+    "pandas>=3.0.5"
 ]
 test = [
     "pytest>=9.1.1",
     "pytest-cov>=7.0.0",
-    "hypothesis>=6.157.2"
+    "hypothesis>=6.161.8"
 ]
 lint = [
-    "ruff>=0.15.22",
+    "ruff>=0.16.0",
     "scipy-stubs>=1.17.1.5"
 ]
 
