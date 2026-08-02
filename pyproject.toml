@@ -52,3 +52,40 @@ packages = ["src/greeks"]
 # The dev/test/lint groups live under [dependency-groups] (PEP 735), which
 # deptry already treats as development dependencies by default, so no
 # dev-group configuration is needed here.
+
+# bump-my-version auto-discovers exactly four filenames: .bumpversion.toml,
+# .bumpversion.cfg, setup.cfg and pyproject.toml. This table previously lived in
+# .rhiza/.cfg.toml, which is none of them, so it was never read — the tool fell
+# back to `git describe` and reported the newest reachable tag as the current
+# version, which is how a release gets cut at a version already published.
+#
+# There is deliberately no `current_version` and no [[tool.bumpversion.files]]
+# entry for the version: bump-my-version reads and rewrites PEP 621
+# [project].version natively, so the number lives in exactly one place and cannot
+# drift.
+[tool.bumpversion]
+allow_dirty = false
+# /rhiza:release commits and tags itself, so the changelog lands in the bump
+# commit; letting bump-my-version do it too would add a second commit and a
+# duplicate tag.
+commit = false
+tag = false
+parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)(?:[-]?(?P<release>[a-z]+)[\\.]?(?P<pre_n>\\d+))?(?:\\+build\\.(?P<build_n>\\d+))?"
+serialize = [
+    "{major}.{minor}.{patch}-{release}.{pre_n}+build.{build_n}",
+    "{major}.{minor}.{patch}+build.{build_n}",
+    "{major}.{minor}.{patch}-{release}.{pre_n}",
+    "{major}.{minor}.{patch}",
+]
+
+[tool.bumpversion.parts.release]
+optional_value = "prod"
+values = [
+    "dev",
+    "alpha",
+    "a",  # PEP 440 short form for alpha
+    "beta",
+    "b",  # PEP 440 short form for beta
+    "rc",
+    "prod",
+]
