@@ -40,8 +40,18 @@ test = [
     "pytest-cov>=7.0.0",
     "hypothesis>=6.161.8"
 ]
+# ruff is deliberately absent: nothing resolves the *tool* from the project environment,
+# since `make fmt` runs the ruff hooks through prek, which provisions each linter itself.
+# The declaration only put a second, unused copy in uv.lock for renovate to bump.
+#
+# scipy-stubs is not a tool and must stay. Stubs are input to the analysis, so they have
+# to be present in the environment mypy *inspects*, not the one it runs from — and
+# `uv run --with mypy` in .rhiza/make.d/test.mk supplies only mypy. Without them
+# `make typecheck` fails under --strict with 'Library stubs not installed for
+# "scipy.stats"' on src/greeks/black_scholes.py. Note it would still pass locally:
+# `make install` syncs with --inexact, which never prunes, so an already-installed copy
+# lingers in .venv after it leaves uv.lock. Only a clean checkout (i.e. CI) sees it.
 lint = [
-    "ruff>=0.16.0",
     "scipy-stubs>=1.17.1.5"
 ]
 
