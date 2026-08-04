@@ -30,15 +30,15 @@ Repository = "https://github.com/Jebel-Quant/greeks"
 
 [dependency-groups]
 dev = [
-    "marimo>=0.23.15",
+    "marimo>=0.23.16",
     "plotly>=6.9.0",
-    "polars>=1.43.1",
+    "polars>=1.43.2",
     "pandas>=3.0.5"
 ]
 test = [
     "pytest>=9.1.1",
     "pytest-cov>=7.0.0",
-    "hypothesis>=6.161.8"
+    "hypothesis>=6.164.0"
 ]
 # ruff is deliberately absent: nothing resolves the *tool* from the project environment,
 # since `make fmt` runs the ruff hooks through prek, which provisions each linter itself.
