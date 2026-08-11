@@ -38,7 +38,7 @@ dev = [
 test = [
     "pytest>=9.1.1",
     "pytest-cov>=7.0.0",
-    "hypothesis>=6.164.0"
+    "hypothesis>=6.165.2"
 ]
 # ruff is deliberately absent: nothing resolves the *tool* from the project environment,
 # since `make fmt` runs the ruff hooks through prek, which provisions each linter itself.
