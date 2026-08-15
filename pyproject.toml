@@ -29,12 +29,16 @@ Homepage = "https://github.com/Jebel-Quant/greeks"
 Repository = "https://github.com/Jebel-Quant/greeks"
 
 [dependency-groups]
-dev = [
-    "marimo>=0.23.16",
-    "plotly>=6.9.0",
-    "polars>=1.43.2",
-    "pandas>=3.0.5"
-]
+# There is deliberately no `dev` group. It previously declared marimo, plotly,
+# polars and pandas, none of which anything in this repo imports: there are no
+# notebooks (MARIMO_FOLDER=docs/notebooks does not exist) and the library itself
+# needs only numpy and scipy. `make marimo` and `make book` provision marimo via
+# `uv run --with marimo`, never from the project environment, so the declarations
+# bought nothing and pulled starlette, uvicorn, websockets, pyzmq and the rest of
+# marimo's tree into uv.lock for every CI install and every dependabot run.
+#
+# Note `make deptry` cannot catch this: it scans SOURCE_FOLDER (src) only, so an
+# unused *dev-group* dependency is outside its scope by construction.
 test = [
     "pytest>=9.1.1",
     "pytest-cov>=7.0.0",

@@ -13,8 +13,16 @@ Option pricing and Greeks under the Black-Scholes model.
 
 ## Installation
 
+This package is not published to PyPI — install it from the repository:
+
 ```bash
-pip install greeks
+pip install git+https://github.com/Jebel-Quant/greeks.git
+```
+
+Or, to pin a release:
+
+```bash
+pip install git+https://github.com/Jebel-Quant/greeks.git@v0.1.1
 ```
 
 Requires Python 3.11+.
@@ -27,16 +35,29 @@ from greeks import OptionType, price, delta, gamma, vega, theta, rho
 S, K, T, r, sigma = 100.0, 100.0, 1.0, 0.05, 0.20
 
 # Price
-call_price = price(S, K, T, r, sigma, OptionType.CALL)   # ~10.45
-put_price  = price(S, K, T, r, sigma, OptionType.PUT)    # ~5.57
+print(f"call  {price(S, K, T, r, sigma, OptionType.CALL):8.4f}")
+print(f"put   {price(S, K, T, r, sigma, OptionType.PUT):8.4f}")
 
 # Greeks
-d = delta(S, K, T, r, sigma, OptionType.CALL)   # ~0.637
-g = gamma(S, K, T, r, sigma)                    # ~0.019
-v = vega(S, K, T, r, sigma)                     # ~37.52
-t = theta(S, K, T, r, sigma, OptionType.CALL)   # ~-0.018  (per day)
-p = rho(S, K, T, r, sigma, OptionType.CALL)     # ~53.23
+print(f"delta {delta(S, K, T, r, sigma, OptionType.CALL):8.4f}")
+print(f"gamma {gamma(S, K, T, r, sigma):8.4f}")
+print(f"vega  {vega(S, K, T, r, sigma):8.4f}")
+print(f"theta {theta(S, K, T, r, sigma, OptionType.CALL):8.4f}")  # per day
+print(f"rho   {rho(S, K, T, r, sigma, OptionType.CALL):8.4f}")
 ```
+
+```result
+call   10.4506
+put     5.5735
+delta   0.6368
+gamma   0.0188
+vega   37.5240
+theta  -0.0176
+rho    53.2325
+```
+
+Those numbers are executed and diffed against this block on every CI run, so they
+cannot go stale silently.
 
 ### API reference
 
