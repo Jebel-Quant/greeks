@@ -31,4 +31,4 @@ theme:
 # template syncs; deleting it leaves the base as the single source of truth.
 #
 # The build environment, not this file, is what makes `::: greeks.black_scholes`
-# in docs/api.md resolve — see MKDOCS_EXTRA_PACKAGES in .rhiza/.env.
+# in docs/api.md resolve — see MKDOCS_EXTRA_PACKAGES in the repo-owned Makefile.
