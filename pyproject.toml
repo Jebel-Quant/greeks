@@ -62,6 +62,53 @@ lint = [
 [tool.hatch.build.targets.wheel]
 packages = ["src/greeks"]
 
+[tool.rhiza-task]
+# Settings for the task runner that replaced the synced make layer in rhiza v1.4.0 --
+# `.rhiza/rhiza.mk`, the ten fragments under `.rhiza/make.d/`, and the root `Makefile`,
+# all deleted by the v1.4.2 sync. Read as layer 3 of rhiza-task's resolution order
+# (defaults -> .rhiza/.env -> pyproject.toml -> RHIZA_* environment). Only entries that
+# differ from the CLI's defaults belong here; `uvx rhiza-task print <setting>` shows what
+# one resolves to.
+
+# `.rhiza/make.d/custom-env.mk` set `COVERAGE_FAIL_UNDER := 100`, raising the make layer's
+# default of 90. The `test` task passes --cov-fail-under on the command line, and this repo
+# has no [tool.coverage.report] table to state the number anywhere else, so leaving it unset
+# would have quietly dropped the gate to 90 with nothing in the tree saying otherwise.
+coverage-fail-under = 100
+
+# The retired python.mk had `TYPECHECKER ?= both`; the CLI defaults to `ty` alone, so a bare
+# migration would have dropped `mypy --strict` from this repo's typecheck gate -- the one the
+# `scipy-stubs` entry in the `lint` group above exists to serve. `both` is also stricter here
+# than it was under make: the shell `case` let mypy's exit status win, so a ty failure could
+# pass, where the CLI raises on each run.
+typechecker = "both"
+
+# The retired quality.mk pinned `RHIZA_CHECKS_VERSION ?= 0.2.1` and installed
+# `pytest-rhiza==$(RHIZA_CHECKS_VERSION)` from PyPI. The CLI's default names a git tag at
+# v0.2.0, so a bare migration would have *downgraded* the conformance checks -- the drift the
+# pin exists to prevent. Pinned exactly rather than floored: a gate that moves under you is
+# not a gate. 0.2.2 is out; bumping to it is a separate upgrade decision.
+pytest-rhiza = "pytest-rhiza==0.2.1"
+
+# The deleted `Makefile` carried `MKDOCS_EXTRA_PACKAGES = --with . --with 'mkdocstrings[python]'`,
+# and each entry here becomes one `--with` on the `uvx zensical build` invocation. Both are
+# load-bearing for `book`: docs/api.md uses a `::: greeks.black_scholes` directive, and zensical
+# runs in an isolated environment where neither this project nor mkdocstrings is importable --
+# without them the build fails with "Could not collect 'greeks.black_scholes'" or "mkdocstrings
+# plugin is enabled, but mkdocstrings is not installed". mkdocstrings[python] is the CLI default,
+# but naming the setting at all replaces the default list, so it has to be repeated alongside `.`.
+mkdocs-extra-packages = ["mkdocstrings[python]", "."]
+
+# Not set, on purpose:
+#   source-folder     -- the default `src` is already this repo's layout, which is all the
+#                        deleted `.rhiza/.env` said with SOURCE_FOLDER=src.
+#   marimo-folder     -- the default `docs/notebooks` is what `.rhiza/.env` set, and the folder
+#                        does not exist here: there are no notebooks (see [dependency-groups]).
+#   ci-os-matrix      -- `.rhiza/.env` deliberately left it unset so `rhiza_ci.yml` picks the
+#                        matrix per caller; the default is ubuntu-latest alone, and this package
+#                        is pure numpy/scipy arithmetic with no paths and no servers.
+#   layers            -- `python` is detected from pyproject.toml.
+
 [tool.deptry]
 # The dev/test/lint groups live under [dependency-groups] (PEP 735), which
 # deptry already treats as development dependencies by default, so no
