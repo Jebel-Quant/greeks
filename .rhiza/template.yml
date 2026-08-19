@@ -1,5 +1,5 @@
 repository: Jebel-Quant/rhiza
-ref: "v1.3.4"
+ref: "v1.4.2"
 
 profiles:
   - github-project
@@ -7,7 +7,36 @@ profiles:
 templates:
   - legal
 
+# Destination paths the sync must not deliver. A directory entry covers everything
+# under it. These are *destination* paths -- where the file lands in this repo -- not
+# paths inside the template clone: `normalise_excludes` takes each entry as written and
+# only tidies separators. The three entries that stood here until v1.4.2 were spelled
+# `bundles/github/.github/workflows/...`, a clone-relative form nothing ever matched,
+# which is how `rhiza_fuzzing.yml` came to sit in `.github/workflows` while template.yml
+# claimed it was excluded.
 exclude:
-  - bundles/github/.github/workflows/rhiza_fuzzing.yml
-  - bundles/github/.github/workflows/rhiza_scorecard.yml
-  - bundles/github/.github/workflows/rhiza_weekly.yml
+  # The two opt-in workflows, neither opted into here. `rhiza_mutation.yml` runs only when
+  # the repository variable MUTATION_ENABLED is 'true', so the job never starts;
+  # `rhiza_fuzzing.yml` needs FUZZING_ENABLED plus a `.clusterfuzzlite/` config this repo
+  # does not have, and its gate sits *inside* the reusable workflow, so it starts on every
+  # pull request and every push to main in order to skip -- a green check whose only
+  # content is that it had nothing to do.
+  #
+  # greeks is closed-form Black-Scholes over floats: no parser, no untrusted input for a
+  # fuzzer to reach, and the assertion-strength question mutation testing answers is one
+  # the 100% coverage gate over two small modules already answers cheaply.
+  - .github/workflows/rhiza_mutation.yml
+  - .github/workflows/rhiza_fuzzing.yml
+
+  # The template's PAT_TOKEN and release-secret walkthrough. It documents secrets a
+  # consumer configures once in the GitHub UI, addressed to whoever set the repo up rather
+  # than to anyone reading the tree. Upstream is where it belongs, and where it stays.
+  - .github/CONFIG.md
+
+  # The discussion and issue forms. Multi-field forms with required textareas, arriving at
+  # a template tag, for a repository whose issues and discussions are opened by the person
+  # who wrote the code: the friction lands entirely on the one contributor a form's
+  # structure was never meant to discipline. Both stay enabled and free-form. Recorded here
+  # rather than simply deleted, because a deletion alone is undone by the next sync.
+  - .github/DISCUSSION_TEMPLATE
+  - .github/ISSUE_TEMPLATE
