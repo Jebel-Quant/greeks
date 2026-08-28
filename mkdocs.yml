@@ -12,8 +12,7 @@ nav:
   - Home: index.md
   - API reference: api.md
   - Development:
-    - Tests: development/TESTS.md
-    - Marimo: development/MARIMO.md
+    - Rhiza: development/rhiza.md
 
 extra:
   social:
