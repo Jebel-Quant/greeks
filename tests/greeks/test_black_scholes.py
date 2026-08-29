@@ -180,6 +180,22 @@ def test_vega_positive():
     assert vega(S, K, T, r, sigma) > 0
 
 
+def test_vega_matches_first_difference_of_price():
+    """Vega equals the numerical derivative of price w.r.t. sigma — calls and puts alike."""
+    h = 1e-4
+
+    def first_difference(option_type):
+        """Central first difference of price w.r.t. volatility."""
+        up = price(S, K, T, r, sigma + h, option_type)
+        down = price(S, K, T, r, sigma - h, option_type)
+        return (up - down) / (2 * h)
+
+    v = vega(S, K, T, r, sigma)
+    # Agreeing for calls AND puts confirms vega is independent of option type.
+    assert abs(first_difference(CALL) - v) < 1e-4
+    assert abs(first_difference(PUT) - v) < 1e-4
+
+
 # ---------------------------------------------------------------------------
 # theta
 # ---------------------------------------------------------------------------
@@ -205,6 +221,18 @@ def test_put_theta_value():
     """Put theta matches the known ATM reference value."""
     # Known value: ~-0.00454 per calendar day
     assert abs(theta(S, K, T, r, sigma, PUT) - (-0.00454)) < ABS_TOL
+
+
+@pytest.mark.parametrize("option_type", [CALL, PUT])
+def test_theta_matches_first_difference_of_price(option_type):
+    """Theta is minus the numerical derivative of price w.r.t. time remaining, per day."""
+    h = 1e-4
+    up = price(S, K, T + h, r, sigma, option_type)
+    down = price(S, K, T - h, r, sigma, option_type)
+    # Price rises with time *remaining*, so decay per calendar day carries the
+    # opposite sign and is scaled by the 365-day convention of the analytic form.
+    expected = -(up - down) / (2 * h) / 365.0
+    assert abs(theta(S, K, T, r, sigma, option_type) - expected) < 1e-8
 
 
 def test_theta_default_option_type_is_call():
@@ -237,6 +265,17 @@ def test_put_rho_value():
     """Put rho matches the known ATM reference value."""
     # Known value: ~-41.89  (per unit rate, not per bp)
     assert abs(rho(S, K, T, r, sigma, PUT) - (-41.89)) < 0.01
+
+
+@pytest.mark.parametrize("option_type", [CALL, PUT])
+def test_rho_matches_first_difference_of_price(option_type):
+    """Rho equals the numerical derivative of price w.r.t. the risk-free rate."""
+    h = 1e-6
+    up = price(S, K, T, r + h, sigma, option_type)
+    down = price(S, K, T, r - h, sigma, option_type)
+    # Per 1 point of rate, matching the analytic convention (not per basis point).
+    expected = (up - down) / (2 * h)
+    assert abs(rho(S, K, T, r, sigma, option_type) - expected) < 1e-4
 
 
 def test_rho_default_option_type_is_call():
