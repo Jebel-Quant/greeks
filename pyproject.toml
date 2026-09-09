@@ -104,8 +104,15 @@ typechecker = "both"
 # `pytest-rhiza==$(RHIZA_CHECKS_VERSION)` from PyPI. The CLI's default names a git tag at
 # v0.2.0, so a bare migration would have *downgraded* the conformance checks -- the drift the
 # pin exists to prevent. Pinned exactly rather than floored: a gate that moves under you is
-# not a gate. 0.2.2 is out; bumping to it is a separate upgrade decision.
-pytest-rhiza = "pytest-rhiza==0.2.1"
+# not a gate.
+#
+# 0.6.0 is required by this repo's dynamic [project].version, not merely available: it is
+# the first release whose test_pyproject accepts a version derived from the VCS. Under
+# 0.2.1 three of its assertions read `[project].version` as the empty string and fail --
+# the required-field check, the semver shape, and the tag-agreement one -- because they
+# predate `dynamic = ["version"]` being a thing a rhiza project could do. 0.6.0 skips each
+# with a reason instead. jquantstats, which made this move first, pins the same version.
+pytest-rhiza = "pytest-rhiza==0.6.0"
 
 # The deleted `Makefile` carried `MKDOCS_EXTRA_PACKAGES = --with . --with 'mkdocstrings[python]'`,
 # and each entry here becomes one `--with` on the `uvx zensical build` invocation. Both are
