@@ -54,7 +54,7 @@ Repository = "https://github.com/Jebel-Quant/greeks"
 # bought nothing and pulled starlette, uvicorn, websockets, pyzmq and the rest of
 # marimo's tree into uv.lock for every CI install and every dependabot run.
 #
-# Note `make deptry` cannot catch this: it scans SOURCE_FOLDER (src) only, so an
+# Note `make deps` cannot catch this: deptry scans `src` only, so an
 # unused *dev-group* dependency is outside its scope by construction.
 test = [
     "pytest>=9.1.1",
@@ -67,7 +67,7 @@ test = [
 #
 # scipy-stubs is not a tool and must stay. Stubs are input to the analysis, so they have
 # to be present in the environment mypy *inspects*, not the one it runs from — and
-# `uv run --with mypy` in .rhiza/make.d/test.mk supplies only mypy. Without them
+# the `typecheck` task (`uv run --with mypy`) supplies only mypy. Without them
 # `make typecheck` fails under --strict with 'Library stubs not installed for
 # "scipy.stats"' on src/greeks/black_scholes.py. Note it would still pass locally:
 # `make install` syncs with --inexact, which never prunes, so an already-installed copy
