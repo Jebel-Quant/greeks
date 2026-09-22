@@ -78,7 +78,7 @@ every task the pinned CLI knows, plus anything `local.mk` adds.
 - `make deps` — deptry unused/missing dependency analysis
 - `make security` — the bandit scan
 - `make license` — fail on GPL/LGPL/AGPL
-- `make rhiza-test` — the rhiza repository checks, from `pytest-rhiza==0.2.1`
+- `make rhiza-test` — the rhiza repository checks, from `pytest-rhiza==0.6.0` (pinned in `[tool.rhiza-task]`)
 - `make book` / `make serve` — build the docs book, and serve it on port 8000
 - `make all` — the gate set CI runs
 
