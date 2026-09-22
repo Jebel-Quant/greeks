@@ -321,6 +321,25 @@ def test_allows_negative_rate(fn):
     fn(S=S, K=K, T=T, r=-0.01, sigma=sigma)
 
 
+# The functions that take an option type; gamma and vega are the same for both.
+TYPED_FUNCS = [price, delta, theta, rho]
+
+
+@pytest.mark.parametrize("fn", TYPED_FUNCS)
+@pytest.mark.parametrize("option_type", ["CALL", "Put", "c", "", None])
+def test_rejects_invalid_option_type(fn, option_type):
+    """Anything that is not a valid OptionType raises rather than pricing a put."""
+    with pytest.raises(ValueError, match="is not a valid OptionType"):
+        fn(S, K, T, r, sigma, option_type)
+
+
+@pytest.mark.parametrize("fn", TYPED_FUNCS)
+@pytest.mark.parametrize(("value", "member"), [("call", CALL), ("put", PUT)])
+def test_accepts_option_type_string_values(fn, value, member):
+    """The enum's string values are accepted and mean the same as the members."""
+    assert fn(S, K, T, r, sigma, value) == fn(S, K, T, r, sigma, member)
+
+
 # ---------------------------------------------------------------------------
 # property-based tests (Hypothesis)
 #
