@@ -6,6 +6,10 @@ All pricing and Greek functions share the market parameters
 be negative). Any other value raises :class:`ValueError` rather than silently
 returning a NaN/inf result, so a degenerate input always fails loudly at the
 call site instead of propagating through downstream calculations.
+
+The same holds for ``option_type``: it is coerced to :class:`OptionType`, so
+``"call"`` and ``"put"`` are accepted and anything else raises
+:class:`ValueError` rather than being priced as a put.
 """
 
 import math
@@ -92,7 +96,8 @@ def price(
         Option price.
 
     Raises:
-        ValueError: If any market parameter is invalid (see the module docstring).
+        ValueError: If any market parameter is invalid (see the module docstring),
+            or if ``option_type`` is not a valid :class:`OptionType`.
 
     Examples:
         >>> float(round(price(100, 100, 1.0, 0.05, 0.20, OptionType.CALL), 2))
@@ -101,6 +106,7 @@ def price(
         5.57
     """
     _validate(S, K, T, r, sigma)
+    option_type = OptionType(option_type)
     d1, d2 = _d1_d2(S, K, T, r, sigma)
     discount = np.exp(-r * T)
     if option_type == OptionType.CALL:
@@ -120,7 +126,8 @@ def delta(
     """First derivative of price with respect to spot.
 
     Raises:
-        ValueError: If any market parameter is invalid (see the module docstring).
+        ValueError: If any market parameter is invalid (see the module docstring),
+            or if ``option_type`` is not a valid :class:`OptionType`.
 
     Examples:
         >>> float(round(delta(100, 100, 1.0, 0.05, 0.20, OptionType.CALL), 4))
@@ -129,6 +136,7 @@ def delta(
         -0.3632
     """
     _validate(S, K, T, r, sigma)
+    option_type = OptionType(option_type)
     d1 = _d1(S, K, T, r, sigma)
     if option_type == OptionType.CALL:
         return float(norm.cdf(d1))
@@ -181,7 +189,8 @@ def theta(
     Returns theta as a negative number representing daily decay.
 
     Raises:
-        ValueError: If any market parameter is invalid (see the module docstring).
+        ValueError: If any market parameter is invalid (see the module docstring),
+            or if ``option_type`` is not a valid :class:`OptionType`.
 
     Examples:
         >>> float(round(theta(100, 100, 1.0, 0.05, 0.20, OptionType.CALL), 5))
@@ -190,6 +199,7 @@ def theta(
         -0.00454
     """
     _validate(S, K, T, r, sigma)
+    option_type = OptionType(option_type)
     d1, d2 = _d1_d2(S, K, T, r, sigma)
     discount = np.exp(-r * T)
     decay = -(S * norm.pdf(d1) * sigma) / (2 * np.sqrt(T))
@@ -212,7 +222,8 @@ def rho(
     Returns rho per 1-point move in rate (not per basis point).
 
     Raises:
-        ValueError: If any market parameter is invalid (see the module docstring).
+        ValueError: If any market parameter is invalid (see the module docstring),
+            or if ``option_type`` is not a valid :class:`OptionType`.
 
     Examples:
         >>> float(round(rho(100, 100, 1.0, 0.05, 0.20, OptionType.CALL), 2))
@@ -221,6 +232,7 @@ def rho(
         -41.89
     """
     _validate(S, K, T, r, sigma)
+    option_type = OptionType(option_type)
     d2 = _d2(S, K, T, r, sigma)
     discount = np.exp(-r * T)
     if option_type == OptionType.CALL:
