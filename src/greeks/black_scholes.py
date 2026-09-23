@@ -59,15 +59,15 @@ def _d1(S: float, K: float, T: float, r: float, sigma: float) -> float:
 
 def _d2(S: float, K: float, T: float, r: float, sigma: float) -> float:
     """Compute d2 of the Black-Scholes formula (d1 minus sigma*sqrt(T))."""
-    return float(_d1(S, K, T, r, sigma) - sigma * np.sqrt(T))
+    return _d1_d2(S, K, T, r, sigma)[1]
 
 
 def _d1_d2(S: float, K: float, T: float, r: float, sigma: float) -> tuple[float, float]:
     """Compute d1 and d2 of the Black-Scholes formula.
 
-    ``d2`` is derived from ``d1`` (``d2 = d1 - sigma*sqrt(T)``); callers that
-    need only one value call :func:`_d1` or :func:`_d2` directly so nothing is
-    computed and then discarded.
+    ``d2`` is derived from ``d1`` (``d2 = d1 - sigma*sqrt(T)``). This is the one
+    place that step is written, so :func:`_d2` delegates here rather than
+    repeating it.
     """
     d1 = _d1(S, K, T, r, sigma)
     d2 = float(d1 - sigma * np.sqrt(T))
