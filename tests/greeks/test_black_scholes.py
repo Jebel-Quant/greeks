@@ -359,8 +359,13 @@ def test_accepts_option_type_string_values(fn, value, member):
 spot = st.floats(min_value=1.0, max_value=1_000.0)
 strike = st.floats(min_value=1.0, max_value=1_000.0)
 expiry = st.floats(min_value=0.01, max_value=5.0)
-rate = st.floats(min_value=0.0, max_value=0.20)
+# Negative rates are a supported input, so the invariants must hold for them too.
+rate = st.floats(min_value=-0.05, max_value=0.20)
 vol = st.floats(min_value=0.01, max_value=2.0)
+option_types = st.sampled_from([OptionType.CALL, OptionType.PUT])
+# Theta is checked by bumping T either side, so keep T well clear of zero,
+# where the central difference itself stops being a good approximation.
+theta_expiry = st.floats(min_value=0.05, max_value=5.0)
 
 
 @pytest.mark.property
@@ -403,6 +408,28 @@ def test_call_price_monotonic_in_volatility(s, k, t, r, sigma1, bump):
     cheaper = price(s, k, t, r, sigma1, OptionType.CALL)
     dearer = price(s, k, t, r, sigma1 + bump, OptionType.CALL)
     assert dearer >= cheaper - 1e-9
+
+
+@pytest.mark.property
+@given(s=spot, k=strike, t=theta_expiry, r=rate, sigma=vol, option_type=option_types)
+def test_theta_matches_first_difference_of_price_property(s, k, t, r, sigma, option_type):
+    """Theta is minus the central difference of price in T, per day, for every valid input."""
+    h = 1e-4
+    up = price(s, k, t + h, r, sigma, option_type)
+    down = price(s, k, t - h, r, sigma, option_type)
+    expected = -(up - down) / (2 * h) / 365.0
+    assert math.isclose(theta(s, k, t, r, sigma, option_type), expected, rel_tol=1e-4, abs_tol=1e-6)
+
+
+@pytest.mark.property
+@given(s=spot, k=strike, t=expiry, r=rate, sigma=vol, option_type=option_types)
+def test_rho_matches_first_difference_of_price_property(s, k, t, r, sigma, option_type):
+    """Rho is the central difference of price in r for every valid input."""
+    h = 1e-6
+    up = price(s, k, t, r + h, sigma, option_type)
+    down = price(s, k, t, r - h, sigma, option_type)
+    expected = (up - down) / (2 * h)
+    assert math.isclose(rho(s, k, t, r, sigma, option_type), expected, rel_tol=1e-4, abs_tol=1e-6)
 
 
 def test_call_price_at_near_zero_expiry_is_intrinsic():
