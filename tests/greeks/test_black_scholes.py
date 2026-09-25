@@ -211,6 +211,11 @@ def test_put_theta_negative():
     assert theta(S, K, T, r, sigma, PUT) < 0
 
 
+def test_deep_itm_put_theta_positive():
+    """Deep in-the-money put theta is positive: interest on the strike outweighs decay."""
+    assert theta(50.0, 100.0, 1.0, 0.05, 0.20, PUT) > 0
+
+
 def test_call_theta_value():
     """Call theta matches the known ATM reference value."""
     # Known value: ~-0.01757 per calendar day
