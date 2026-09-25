@@ -14,6 +14,7 @@ The same holds for ``option_type``: it is coerced to :class:`OptionType`, so
 
 import math
 from enum import StrEnum
+from typing import Literal
 
 import numpy as np
 from scipy.stats import norm
@@ -80,7 +81,7 @@ def price(
     T: float,
     r: float,
     sigma: float,
-    option_type: OptionType = OptionType.CALL,
+    option_type: OptionType | Literal["call", "put"] = OptionType.CALL,
 ) -> float:
     """Black-Scholes option price.
 
@@ -90,7 +91,8 @@ def price(
         T: Time to expiry in years.
         r: Risk-free rate (continuously compounded).
         sigma: Volatility (annualised).
-        option_type: OptionType.CALL or OptionType.PUT.
+        option_type: OptionType.CALL or OptionType.PUT, or its string value
+            ``"call"`` or ``"put"``.
 
     Returns:
         Option price.
@@ -121,7 +123,7 @@ def delta(
     T: float,
     r: float,
     sigma: float,
-    option_type: OptionType = OptionType.CALL,
+    option_type: OptionType | Literal["call", "put"] = OptionType.CALL,
 ) -> float:
     """First derivative of price with respect to spot.
 
@@ -182,7 +184,7 @@ def theta(
     T: float,
     r: float,
     sigma: float,
-    option_type: OptionType = OptionType.CALL,
+    option_type: OptionType | Literal["call", "put"] = OptionType.CALL,
 ) -> float:
     """First derivative of price with respect to time (per calendar day).
 
@@ -216,7 +218,7 @@ def rho(
     T: float,
     r: float,
     sigma: float,
-    option_type: OptionType = OptionType.CALL,
+    option_type: OptionType | Literal["call", "put"] = OptionType.CALL,
 ) -> float:
     """First derivative of price with respect to the risk-free rate.
 
