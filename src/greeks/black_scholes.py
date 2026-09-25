@@ -186,7 +186,8 @@ def theta(
 ) -> float:
     """First derivative of price with respect to time (per calendar day).
 
-    Returns theta as a negative number representing daily decay.
+    Theta is usually negative (daily time decay), but it can be positive, e.g.
+    for a deep in-the-money put, or for a call when ``r`` is negative.
 
     Raises:
         ValueError: If any market parameter is invalid (see the module docstring),
