@@ -29,30 +29,27 @@ Requires Python 3.11+.
 
 ## Usage
 
-```python
-from greeks import OptionType, price, delta, gamma, vega, theta, rho
+```pycon
+>>> from greeks import OptionType, price, delta, gamma, vega, theta, rho
 
-S, K, T, r, sigma = 100.0, 100.0, 1.0, 0.05, 0.20
+>>> S, K, T, r, sigma = 100.0, 100.0, 1.0, 0.05, 0.20
 
-# Price
-print(f"call  {price(S, K, T, r, sigma, OptionType.CALL):8.4f}")
-print(f"put   {price(S, K, T, r, sigma, OptionType.PUT):8.4f}")
-
-# Greeks
-print(f"delta {delta(S, K, T, r, sigma, OptionType.CALL):8.4f}")
-print(f"gamma {gamma(S, K, T, r, sigma):8.4f}")
-print(f"vega  {vega(S, K, T, r, sigma):8.4f}")
-print(f"theta {theta(S, K, T, r, sigma, OptionType.CALL):8.4f}")  # per day
-print(f"rho   {rho(S, K, T, r, sigma, OptionType.CALL):8.4f}")
-```
-
-```result
+>>> # Price
+>>> print(f"call  {price(S, K, T, r, sigma, OptionType.CALL):8.4f}")
 call   10.4506
+>>> print(f"put   {price(S, K, T, r, sigma, OptionType.PUT):8.4f}")
 put     5.5735
+
+>>> # Greeks
+>>> print(f"delta {delta(S, K, T, r, sigma, OptionType.CALL):8.4f}")
 delta   0.6368
+>>> print(f"gamma {gamma(S, K, T, r, sigma):8.4f}")
 gamma   0.0188
+>>> print(f"vega  {vega(S, K, T, r, sigma):8.4f}")
 vega   37.5240
+>>> print(f"theta {theta(S, K, T, r, sigma, OptionType.CALL):8.4f}")  # per day
 theta  -0.0176
+>>> print(f"rho   {rho(S, K, T, r, sigma, OptionType.CALL):8.4f}")
 rho    53.2325
 ```
 
