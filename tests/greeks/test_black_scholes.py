@@ -1,15 +1,14 @@
 """Tests for greeks.black_scholes module.
 
-The Rhiza test-layout gate requires a 1:1 test/source mirror: every ``Test<Name>``
-class must map to a ``<Name>`` class in the mirrored source module. ``black_scholes``
-deliberately exposes module-level *functions* (``price``, ``delta``, ...) rather than
-classes, so the per-Greek behaviour is exercised with plain module-level test
-functions here. The only class-based test is :class:`TestOptionType`, which mirrors
-the source :class:`~greeks.black_scholes.OptionType` enum.
+The tests are grouped by public function (``price``, ``delta``, ``gamma``,
+``vega``, ``theta``, ``rho``). Each group pins reference values at a well-known
+ATM point and, where possible, an analytic identity: put-call parity, or a Greek
+as a finite difference of ``price``. An identity keeps holding when a formula is
+refactored, so it is preferred over golden numbers.
 
-The property-based (Hypothesis) tests that previously lived in ``test_properties.py``
-are folded in below; there is no ``properties.py`` source module for them to mirror,
-so they belong with the module they actually cover.
+After the per-function groups come the input-validation tests, which every public
+function must pass, and the property-based (Hypothesis) tests, which check the
+same invariants across the whole valid input domain.
 """
 
 import math
@@ -350,9 +349,7 @@ def test_accepts_option_type_string_values(fn, value, member):
 #
 # These complement the reference-value tests above by asserting invariants that
 # must hold across the whole valid input domain, plus a few degenerate-input
-# cases (T->0, sigma->0) the fixed-value tests do not cover. They previously
-# lived in ``test_properties.py``, which had no ``properties.py`` source module
-# to mirror; they cover ``black_scholes`` and so belong here.
+# cases (T->0, sigma->0) the fixed-value tests do not cover.
 # ---------------------------------------------------------------------------
 
 # Strategies for economically sensible Black-Scholes inputs.
