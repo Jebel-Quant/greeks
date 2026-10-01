@@ -130,7 +130,6 @@ toml = [
 name = "greeks"
 source = { editable = "." }
 dependencies = [
-    { name = "numpy" },
     { name = "scipy" },
 ]
 
@@ -146,10 +145,7 @@ test = [
 ]
 
 [package.metadata]
-requires-dist = [
-    { name = "numpy", specifier = ">=2.4.6,<3" },
-    { name = "scipy", specifier = ">=1.17.0,<2" },
-]
+requires-dist = [{ name = "scipy", specifier = ">=1.17.0,<2" }]
 
 [package.metadata.requires-dev]
 lint = [{ name = "scipy-stubs", specifier = ">=1.17.1.5" }]

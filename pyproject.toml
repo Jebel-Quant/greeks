@@ -38,7 +38,6 @@ authors = [
 ]
 dependencies = [
     "scipy>=1.17.0,<2",
-    "numpy>=2.4.6,<3"
 ]
 
 [project.urls]
@@ -49,7 +48,7 @@ Repository = "https://github.com/Jebel-Quant/greeks"
 # There is deliberately no `dev` group. It previously declared marimo, plotly,
 # polars and pandas, none of which anything in this repo imports: there are no
 # notebooks (MARIMO_FOLDER=docs/notebooks does not exist) and the library itself
-# needs only numpy and scipy. `make marimo` and `make book` provision marimo via
+# needs only scipy. `make marimo` and `make book` provision marimo via
 # `uv run --with marimo`, never from the project environment, so the declarations
 # bought nothing and pulled starlette, uvicorn, websockets, pyzmq and the rest of
 # marimo's tree into uv.lock for every CI install and every dependabot run.
@@ -130,7 +129,7 @@ mkdocs-extra-packages = ["mkdocstrings[python]", "."]
 #                        does not exist here: there are no notebooks (see [dependency-groups]).
 #   ci-os-matrix      -- `.rhiza/.env` deliberately left it unset so `rhiza_ci.yml` picks the
 #                        matrix per caller; the default is ubuntu-latest alone, and this package
-#                        is pure numpy/scipy arithmetic with no paths and no servers.
+#                        is pure scipy/math arithmetic with no paths and no servers.
 #   layers            -- `python` is detected from pyproject.toml.
 
 [tool.deptry]

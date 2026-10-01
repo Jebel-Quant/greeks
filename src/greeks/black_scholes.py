@@ -16,7 +16,6 @@ import math
 from enum import StrEnum
 from typing import Literal
 
-import numpy as np
 from scipy.stats import norm
 
 # Theta is reported as decay per calendar day, so the annualised derivative is
@@ -54,8 +53,8 @@ def _d1(S: float, K: float, T: float, r: float, sigma: float) -> float:
     The ``0.5 * sigma**2`` term is the variance drift adjustment of the
     log-moneyness numerator.
     """
-    vol_sqrt_t = sigma * np.sqrt(T)
-    return float((np.log(S / K) + (r + 0.5 * sigma**2) * T) / vol_sqrt_t)
+    vol_sqrt_t = sigma * math.sqrt(T)
+    return (math.log(S / K) + (r + 0.5 * sigma**2) * T) / vol_sqrt_t
 
 
 def _d2(S: float, K: float, T: float, r: float, sigma: float) -> float:
@@ -71,7 +70,7 @@ def _d1_d2(S: float, K: float, T: float, r: float, sigma: float) -> tuple[float,
     repeating it.
     """
     d1 = _d1(S, K, T, r, sigma)
-    d2 = float(d1 - sigma * np.sqrt(T))
+    d2 = d1 - sigma * math.sqrt(T)
     return d1, d2
 
 
@@ -110,7 +109,7 @@ def price(
     _validate(S, K, T, r, sigma)
     option_type = OptionType(option_type)
     d1, d2 = _d1_d2(S, K, T, r, sigma)
-    discount = np.exp(-r * T)
+    discount = math.exp(-r * T)
     if option_type == OptionType.CALL:
         return float(S * norm.cdf(d1) - K * discount * norm.cdf(d2))
     else:
@@ -158,7 +157,7 @@ def gamma(S: float, K: float, T: float, r: float, sigma: float) -> float:
     """
     _validate(S, K, T, r, sigma)
     d1 = _d1(S, K, T, r, sigma)
-    return float(norm.pdf(d1) / (S * sigma * np.sqrt(T)))
+    return float(norm.pdf(d1) / (S * sigma * math.sqrt(T)))
 
 
 def vega(S: float, K: float, T: float, r: float, sigma: float) -> float:
@@ -175,7 +174,7 @@ def vega(S: float, K: float, T: float, r: float, sigma: float) -> float:
     """
     _validate(S, K, T, r, sigma)
     d1 = _d1(S, K, T, r, sigma)
-    return float(S * norm.pdf(d1) * np.sqrt(T))
+    return float(S * norm.pdf(d1) * math.sqrt(T))
 
 
 def theta(
@@ -204,8 +203,8 @@ def theta(
     _validate(S, K, T, r, sigma)
     option_type = OptionType(option_type)
     d1, d2 = _d1_d2(S, K, T, r, sigma)
-    discount = np.exp(-r * T)
-    decay = -(S * norm.pdf(d1) * sigma) / (2 * np.sqrt(T))
+    discount = math.exp(-r * T)
+    decay = -(S * norm.pdf(d1) * sigma) / (2 * math.sqrt(T))
     if option_type == OptionType.CALL:
         return float((decay - r * K * discount * norm.cdf(d2)) / _CALENDAR_DAYS_PER_YEAR)
     else:
@@ -237,7 +236,7 @@ def rho(
     _validate(S, K, T, r, sigma)
     option_type = OptionType(option_type)
     d2 = _d2(S, K, T, r, sigma)
-    discount = np.exp(-r * T)
+    discount = math.exp(-r * T)
     if option_type == OptionType.CALL:
         return float(K * T * discount * norm.cdf(d2))
     else:
