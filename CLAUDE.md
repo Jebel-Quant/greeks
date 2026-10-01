@@ -6,8 +6,8 @@ Guidance for working in this repository.
 
 `greeks` — option pricing and the Greeks under Black-Scholes, part of the
 [jebel-quant](https://github.com/jebel-quant) ecosystem. Deliberately small:
-closed-form formulas over floats, with `scipy` and `numpy` as the only runtime
-dependencies. No parser, no I/O, no untrusted input.
+closed-form formulas over floats, with `scipy` as the only runtime
+dependency. No parser, no I/O, no untrusted input.
 
 The whole library is `src/greeks/black_scholes.py`, re-exported flat from
 `greeks/__init__.py`:
