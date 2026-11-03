@@ -56,9 +56,9 @@ Repository = "https://github.com/Jebel-Quant/greeks"
 # Note `make deps` cannot catch this: deptry scans `src` only, so an
 # unused *dev-group* dependency is outside its scope by construction.
 test = [
-    "pytest>=9.1.1",
+    "pytest>=9.2.0",
     "pytest-cov>=7.0.0",
-    "hypothesis>=6.169.0"
+    "hypothesis>=6.170.14"
 ]
 # ruff is deliberately absent: nothing resolves the *tool* from the project environment,
 # since `make fmt` runs the ruff hooks through prek, which provisions each linter itself.
